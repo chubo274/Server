@@ -8,14 +8,13 @@ const createTransport = async (req, res) => {
       type,
       slots,
     });
-    res.json({
-      statusCode: 200,
+    res.status(200).json({
       message: "Create Transport successfully!",
       data: newTransport,
     });
   } catch (error) {
     console.log("createTransport error: ", error.message);
-    res.json(error.message);
+    res.status(400).json(error.message);
   }
 };
 
@@ -23,7 +22,7 @@ const getTransports = async (req, res) => {
   try {
   } catch (error) {
     console.log("getTransports error: ", error.message);
-    res.json(error.message);
+    res.status(400).json(error.message);
   }
 };
 

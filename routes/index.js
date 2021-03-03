@@ -1,8 +1,8 @@
 module.exports = {
   user: require("./user"),
   hotel: require("./hotel"),
-  transport: require("./transport"),
   tourGuide: require("./tourGuide"),
+  transport: require("./transport"),
   province: require("./province"),
   place: require("./place"),
   tour: require("./tour"),

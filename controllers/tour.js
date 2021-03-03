@@ -26,8 +26,8 @@ const createTour = async (req, res) => {
 const getTours = async (req, res) => {
   try {
     const listTours = await TourModel.find();
-    res.json(listTours);
+    res.status(200).json(listTours);
   } catch (error) {}
 };
 
-module.exports = { getTours };
+module.exports = { createTour, getTours };
