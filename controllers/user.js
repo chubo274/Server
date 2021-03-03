@@ -3,40 +3,41 @@ const UserModel = require("../models/user");
 const createUser = async (req, res) => {
   const { phone, password, name, address } = req.body;
   try {
-    if (!phone || !password || !name) {
-      res.json({
-        statusCode: 400,
-        message: "You need fill phone, password and name!",
-      });
-    } else {
+    {
       await UserModel.create({
         phone,
         password,
         name,
         address,
       });
-      res.json({
-        statusCode: 200,
+
+      res.status(200).json({
         message: "Create user successfully!",
       });
     }
   } catch (error) {
-    console.log("createUser error: ", error.message);
-    res.json("Error: ", error.message);
+    console.log("Create user error: ", error.message);
+    res.status(400).json({
+      error: error.message,
+    });
   }
 };
 
 const deleteById = async (req, res) => {
+  const { id } = req.params;
   try {
-    const id = req.params.id;
     if (id) {
       await UserModel.findByIdAndDelete(id);
-      res.json({
-        statusCode: 200,
+      res.status(200).json({
         message: "Delete user successfully!",
       });
     }
-  } catch (error) {}
+  } catch (error) {
+    console.log("Delete user error: ", error.message);
+    res.status(400).json({
+      error: error.message,
+    });
+  }
 };
 
 const getUserById = async (req, res) => {
@@ -44,20 +45,25 @@ const getUserById = async (req, res) => {
     const id = req.params.id;
     if (id) {
       const user = await UserModel.findById(id);
-
-      res.json(user);
+      res.status(200).json(user);
     }
-  } catch (error) {}
+  } catch (error) {
+    console.log("get user by id error: ", error.message);
+    res.status(400).json({
+      error: error.message,
+    });
+  }
 };
 
 const getUsers = async (req, res) => {
-  console.log("getusers");
   try {
     const listUsers = await UserModel.find();
-    res.json(listUsers);
-    console.log("listUsers:", listUsers);
+    res.status(200).json(listUsers);
   } catch (error) {
-    console.log("error:", error.message);
+    console.log("get list user error: ", error.message);
+    res.status(400).json({
+      error: error.message,
+    });
   }
 };
 
@@ -68,18 +74,19 @@ const updateUser = async (req, res) => {
       await UserModel.findByIdAndUpdate(id, {
         ...req.body,
       });
-      res.json({
-        statusCode: 200,
+      res.status(200).json({
         message: "Update user successfully!",
       });
     } else {
-      res.json({
-        statusCode: 400,
+      res.status(400).json({
         message: "Id user not found!",
       });
     }
   } catch (error) {
-    res.send("Error");
+    console.log("update user error: ", error.message);
+    res.status(400).json({
+      error: error.message,
+    });
   }
 };
 

@@ -9,14 +9,13 @@ const createTourGuide = async (req, res) => {
       service,
       phone,
     });
-    res.json({
-      statusCode: 200,
+    res.status(200).json({
       message: "Create TourGuide successfully!",
       data: newTourGuide,
     });
   } catch (error) {
     console.log("createTourGuide error: ", error.message);
-    res.json(error.message);
+    res.status(400).json(error.message);
   }
 };
 
@@ -24,8 +23,8 @@ const getTourGuides = async (req, res) => {
   try {
   } catch (error) {
     console.log("getTourGuides error: ", error.message);
-    res.json(error.message);
+    res.status(400).json(error.message);
   }
 };
 
-module.exports = { getTourGuides };
+module.exports = { createTourGuide, getTourGuides };
