@@ -16,8 +16,7 @@ const createHotel = async (req, res) => {
         return;
       }
       res.status(200).json({
-        message: "Create Hotel thành công!",
-        data: result,
+        ...result,
       });
     }
   );
@@ -31,7 +30,7 @@ const getHotels = async (req, res) => {
     }
 
     res.status(200).json({
-      data: result,
+      ...result,
     });
   });
 };
@@ -53,7 +52,7 @@ const getHotelById = async (req, res) => {
     }
 
     res.status(200).json({
-      data: result,
+      ...result,
     });
   });
 };
@@ -98,8 +97,7 @@ const updateHotel = async (req, res) => {
       }
 
       res.status(200).json({
-        message: "Update Hotel thành công",
-        data: result,
+        ...result,
       });
     }
   );

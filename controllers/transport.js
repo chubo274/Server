@@ -17,10 +17,7 @@ const createTransport = async (req, res) => {
         return;
       }
 
-      res.status(200).json({
-        message: "Create Transport thành công!",
-        data: result,
-      });
+      res.status(200).json({ ...result });
     }
   );
 };
@@ -32,9 +29,7 @@ const getTransports = async (req, res) => {
       return;
     }
 
-    res.status(200).json({
-      data: result,
-    });
+    res.status(200).json({ ...result });
   });
 };
 
@@ -54,7 +49,7 @@ const getTransportById = async (req, res) => {
       return;
     }
     res.status(200).json({
-      data: result,
+      ...result,
     });
   });
 };
@@ -77,10 +72,7 @@ const updateTransport = async (req, res) => {
         });
         return;
       }
-      res.status(200).json({
-        message: "Update Transport thành công",
-        data: result,
-      });
+      res.status(200).json({ ...result });
     }
   );
 };
@@ -100,10 +92,7 @@ const deleteTransportById = async (req, res) => {
         });
         return;
       }
-      res.status(200).json({
-        message: "Delete Transport thành công",
-        data: result,
-      });
+      res.status(200).json({ ...result });
     }
   );
 };

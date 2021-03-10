@@ -14,8 +14,7 @@ const createPlace = async (req, res) => {
         return;
       }
       res.status(200).json({
-        message: "Create Place thành công!",
-        data: result,
+        ...result,
       });
     }
   );
@@ -28,7 +27,7 @@ const getPlaces = async (req, res) => {
       return;
     }
     res.status(200).json({
-      data: result,
+      ...result,
     });
   });
 };
@@ -50,7 +49,7 @@ const getPlaceById = async (req, res) => {
     }
 
     res.status(200).json({
-      data: result,
+      ...result,
     });
   });
 };
@@ -95,8 +94,7 @@ const updatePlace = async (req, res) => {
       }
 
       res.status(200).json({
-        message: "Update Place thành công",
-        data: result,
+        ...result,
       });
     }
   );
