@@ -1,4 +1,5 @@
 const TourModel = require("../models/Tour");
+const _ = require("lodash");
 
 const createTour = async (req, res) => {
   const {

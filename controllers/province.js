@@ -1,49 +1,110 @@
 const ProvinceModel = require("../models/Province");
+const _ = require("lodash");
 
 const createProvince = async (req, res) => {
   const { name, description } = req.body;
-  try {
-    const newProvince = await ProvinceModel.create({
+  ProvinceModel.create(
+    {
       name,
       description,
-    });
-
-    res.status(200).json({
-      message: "Create Province successfully!",
-      data: newProvince,
-    });
-  } catch (error) {
-    console.log("createProvince error: ", error.message);
-    res.status(400).json(error.message);
-  }
+    },
+    (err, result) => {
+      if (err) {
+        res.status(400).json({ error: err.message });
+        return;
+      }
+      res.status(200).json({
+        message: "Create Province thành công!",
+        data: result,
+      });
+    }
+  );
 };
 
 const getProvinces = async (req, res) => {
-  try {
-    const listProvinces = await ProvinceModel.find();
+  ProvinceModel.find((err, result) => {
+    if (err) {
+      res.status(400).json({ error: err.message });
+      return;
+    }
+    res.status(200).json({
+      data: result,
+    });
+  });
+};
+
+const getProvinceById = async (req, res) => {
+  const { id } = req.params;
+  ProvinceModel.findById(id, (err, result) => {
+    if (err) {
+      res.status(400).json({
+        error: err.message,
+      });
+      return;
+    }
+    if (_.isEmpty(result)) {
+      res.status(400).json({
+        error: "Đối tượng này không tồn tại",
+      });
+      return;
+    }
 
     res.status(200).json({
-      data: listProvinces,
+      data: result,
     });
-  } catch (error) {
-    console.log("getProvinces error: ", error.message);
-    res.status(400).json(error.message);
-  }
+  });
 };
 
 const deleteProvinceById = async (req, res) => {
   const { id } = req.params;
-  console.log({ id });
-  try {
-    await ProvinceModel.findByIdAndDelete(id);
+  ProvinceModel.findByIdAndDelete(id, (err, result) => {
+    if (err) {
+      res.status(400).json({ error: err.message });
+      return;
+    }
+    if (_.isEmpty(result)) {
+      res.status(400).json({
+        error: "Đối tượng này không tồn tại",
+      });
+      return;
+    }
 
     res.status(200).json({
-      message: "Delete Province successfully!",
+      message: "Delete Province thành công!",
     });
-  } catch (error) {
-    console.log("deleteProvinceById error: ", error.message);
-    res.status(400).json(error.message);
-  }
+  });
 };
 
-module.exports = { getProvinces, createProvince, deleteProvinceById };
+const updateProvince = async (req, res) => {
+  const { id } = req.params;
+  // const { name, type, slots, phone } = req.body;
+  ProvinceModel.findByIdAndUpdate(
+    id,
+    { ...req.body },
+    { new: true },
+    (err, result) => {
+      if (err) {
+        res.status(400).json({ error: err.message });
+        return;
+      }
+      if (_.isEmpty(result)) {
+        res.status(400).json({
+          error: "Đối tượng này không tồn tại",
+        });
+        return;
+      }
+
+      res.status(200).json({
+        message: "Update Province thành công",
+        data: result,
+      });
+    }
+  );
+};
+module.exports = {
+  getProvinces,
+  createProvince,
+  deleteProvinceById,
+  getProvinceById,
+  updateProvince,
+};

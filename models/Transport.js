@@ -5,6 +5,7 @@ const transportSchema = new Schema(
   {
     name: { type: String, required: true },
     type: String,
+    slots: Number,
     phone: String,
   },
   { versionKey: false }
