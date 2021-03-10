@@ -17,8 +17,7 @@ const createTourGuide = async (req, res) => {
       }
 
       res.status(200).json({
-        message: "Create TourGuide thành công!",
-        data: result,
+        ...result,
       });
     }
   );
@@ -31,9 +30,7 @@ const getTourGuides = async (req, res) => {
       return;
     }
 
-    res.status(200).json({
-      data: result,
-    });
+    res.status(200).json({ ...result });
   });
 };
 
@@ -53,7 +50,7 @@ const getTourGuideById = async (req, res) => {
       return;
     }
     res.status(200).json({
-      data: result,
+      ...result,
     });
   });
 };
@@ -100,8 +97,7 @@ const updateTourGuide = async (req, res) => {
         return;
       }
       res.status(200).json({
-        message: "Update Tour Guide thành công",
-        data: result,
+        ...result,
       });
     }
   );

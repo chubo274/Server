@@ -14,8 +14,7 @@ const createProvince = async (req, res) => {
         return;
       }
       res.status(200).json({
-        message: "Create Province thành công!",
-        data: result,
+        ...result,
       });
     }
   );
@@ -28,7 +27,7 @@ const getProvinces = async (req, res) => {
       return;
     }
     res.status(200).json({
-      data: result,
+      ...result,
     });
   });
 };
@@ -50,7 +49,7 @@ const getProvinceById = async (req, res) => {
     }
 
     res.status(200).json({
-      data: result,
+      ...result,
     });
   });
 };
@@ -95,8 +94,7 @@ const updateProvince = async (req, res) => {
       }
 
       res.status(200).json({
-        message: "Update Province thành công",
-        data: result,
+        ...result,
       });
     }
   );

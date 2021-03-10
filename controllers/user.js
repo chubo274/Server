@@ -11,10 +11,9 @@ const encodeToken = (_id, baseToken) => {
 
 //* Login
 const login = async (req, res) => {
-  const { phone, password } = req.body;
-  let user = await UserModel.findOne({ phone });
+  const { user_name, password } = req.body;
+  let user = await UserModel.findOne({ phone: user_name });
   if (_.isEmpty(user)) {
-    console.log("login error: ", err.message);
     res.status(402).json({
       error: "Số điện thoại không tồn tại",
     });
@@ -39,10 +38,7 @@ const login = async (req, res) => {
   const token = encodeToken(user._id, baseToken);
   const resData = { ...data._doc, token };
   delete resData.baseToken;
-  res.status(200).json({
-    message: "Đăng nhập thành công",
-    data: { ...resData },
-  });
+  res.status(200).json({ ...resData });
 };
 
 //* Create
@@ -65,10 +61,7 @@ const createUser = async (req, res) => {
         return;
       }
 
-      res.status(200).json({
-        message: "Create user thành công!",
-        data: result,
-      });
+      res.status(200).json({ ...result });
     }
   );
 };
@@ -112,7 +105,7 @@ const getUserById = async (req, res) => {
       });
       return;
     }
-    res.status(200).json({ data: result });
+    res.status(200).json({ ...result });
   });
 };
 
@@ -126,7 +119,7 @@ const getUsers = async (req, res) => {
       return;
     }
 
-    res.status(200).json({ data: result });
+    res.status(200).json({ ...result });
   });
 };
 
@@ -147,10 +140,7 @@ const updateUser = async (req, res) => {
       });
       return;
     }
-    res.status(200).json({
-      message: "Update user thành công",
-      data: result,
-    });
+    res.status(200).json({ ...result });
   });
 };
 
