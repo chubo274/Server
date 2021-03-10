@@ -1,51 +1,113 @@
 const HotelModel = require("../models/Hotel");
+const _ = require("lodash");
 
 const createHotel = async (req, res) => {
   const { name, address, service, hotline } = req.body;
-  try {
-    const newHotel = await HotelModel.create({
+  HotelModel.create(
+    {
       name,
       address,
       service,
       hotline,
-    });
-
-    res.status(200).json({
-      message: "Create Hotel successfully!",
-      data: newHotel,
-    });
-  } catch (error) {
-    console.log("createHotel error: ", error.message);
-    res.status(400).json(error.message);
-  }
+    },
+    (err, result) => {
+      if (err) {
+        res.status(400).json({ error: err.message });
+        return;
+      }
+      res.status(200).json({
+        message: "Create Hotel thành công!",
+        data: result,
+      });
+    }
+  );
 };
 
 const getHotels = async (req, res) => {
-  try {
-    const listHotels = await HotelModel.find();
+  HotelModel.find((err, result) => {
+    if (err) {
+      res.status(400).json({ error: err.message });
+      return;
+    }
 
     res.status(200).json({
-      data: listHotels,
+      data: result,
     });
-  } catch (error) {
-    console.log("getHotels error: ", error.message);
-    res.status(400).json(error.message);
-  }
+  });
+};
+
+const getHotelById = async (req, res) => {
+  const { id } = req.params;
+  HotelModel.findById(id, (err, result) => {
+    if (err) {
+      res.status(400).json({
+        error: err.message,
+      });
+      return;
+    }
+    if (_.isEmpty(result)) {
+      res.status(400).json({
+        error: "Đối tượng này không tồn tại",
+      });
+      return;
+    }
+
+    res.status(200).json({
+      data: result,
+    });
+  });
 };
 
 const deleteHotelById = async (req, res) => {
   const { id } = req.params;
-  console.log({ id });
-  try {
-    await HotelModel.findByIdAndDelete(id);
+  HotelModel.findByIdAndDelete(id, (err, result) => {
+    if (err) {
+      res.status(400).json({ error: err.message });
+      return;
+    }
+    if (_.isEmpty(result)) {
+      res.status(400).json({
+        error: "Đối tượng này không tồn tại",
+      });
+      return;
+    }
 
     res.status(200).json({
-      message: "Delete Hotel successfully!",
+      message: "Delete Hotel thành công!",
     });
-  } catch (error) {
-    console.log("deleteHotelById error: ", error.message);
-    res.status(400).json(error.message);
-  }
+  });
 };
 
-module.exports = { getHotels, createHotel, deleteHotelById };
+const updateHotel = async (req, res) => {
+  const { id } = req.params;
+  // const { name, type, slots, phone } = req.body;
+  HotelModel.findByIdAndUpdate(
+    id,
+    { ...req.body },
+    { new: true },
+    (err, result) => {
+      if (err) {
+        res.status(400).json({ error: err.message });
+        return;
+      }
+      if (_.isEmpty(result)) {
+        res.status(400).json({
+          error: "Đối tượng này không tồn tại",
+        });
+        return;
+      }
+
+      res.status(200).json({
+        message: "Update Hotel thành công",
+        data: result,
+      });
+    }
+  );
+};
+module.exports = {
+  getHotels,
+  createHotel,
+  deleteHotelById,
+  getHotelById,
+  updateHotel,
+};
