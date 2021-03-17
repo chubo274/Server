@@ -19,7 +19,11 @@ const tourSchema = new Schema(
       required: true,
     },
     avatar: { type: String, required: true },
-    place_start: { type: String, required: true },
+    place_start: {
+      type: Schema.Types.ObjectId,
+      ref: "Province",
+      required: true,
+    },
     time_start: { type: Date, required: true },
     travel_time: { day: { type: Number, required: true }, night: Number },
     schedule: [
@@ -50,10 +54,10 @@ const tourSchema = new Schema(
       ref: "TourGuide",
       required: true,
     },
-    list_image: [{ link: String }],
+    list_image: [String],
     discount: Number,
     description: String,
-    notes: [{ note: String }],
+    notes: [String],
     booking: [
       {
         user: { type: Schema.Types.ObjectId, ref: "User" },
