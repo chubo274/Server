@@ -3,23 +3,20 @@ const TransportModel = require("../models/Transport");
 const _ = require("lodash");
 
 const createTransport = async (req, res) => {
-  const { name, type, slots, phone } = req.body;
-  TransportModel.create(
-    {
-      name,
-      type,
-      slots,
-      phone,
-    },
-    (err, result) => {
-      if (err) {
-        res.status(400).json({ error: err.message });
-        return;
-      }
-
-      res.status(200).json({ ...result });
+  const body = {
+    name: req.body.name.trim(),
+    type: req.body.type.trim(),
+    slots: req.body.slots,
+    phone: req.body.phone,
+  };
+  TransportModel.create(body, (err, result) => {
+    if (err) {
+      res.status(400).json({ error: err.message });
+      return;
     }
-  );
+
+    res.status(200).json(result);
+  });
 };
 
 const getTransports = async (req, res) => {
@@ -29,7 +26,7 @@ const getTransports = async (req, res) => {
       return;
     }
 
-    res.status(200).json({ ...result });
+    res.status(200).json(result);
   });
 };
 
@@ -48,33 +45,32 @@ const getTransportById = async (req, res) => {
       });
       return;
     }
-    res.status(200).json({
-      ...result,
-    });
+    res.status(200).json(result);
   });
 };
 
 const updateTransport = async (req, res) => {
   const { id } = req.params;
-  const { name, type, slots, phone } = req.body;
-  TransportModel.findByIdAndUpdate(
-    id,
-    { ...req.body },
-    { new: true },
-    (err, result) => {
-      if (err) {
-        res.status(400).json({ error: err.message });
-        return;
-      }
-      if (_.isEmpty(result)) {
-        res.status(400).json({
-          error: "Đối tượng này không tồn tại",
-        });
-        return;
-      }
-      res.status(200).json({ ...result });
+  const body = {
+    ...req.body,
+    name: req.body.name.trim(),
+    type: req.body.type.trim(),
+    slots: req.body.slots,
+    phone: req.body.phone,
+  };
+  TransportModel.findByIdAndUpdate(id, body, { new: true }, (err, result) => {
+    if (err) {
+      res.status(400).json({ error: err.message });
+      return;
     }
-  );
+    if (_.isEmpty(result)) {
+      res.status(400).json({
+        error: "Đối tượng này không tồn tại",
+      });
+      return;
+    }
+    res.status(200).json(result);
+  });
 };
 
 const deleteTransportById = async (req, res) => {
@@ -92,7 +88,7 @@ const deleteTransportById = async (req, res) => {
         });
         return;
       }
-      res.status(200).json({ ...result });
+      res.status(200).json(result);
     }
   );
 };

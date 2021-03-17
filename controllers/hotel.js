@@ -15,9 +15,7 @@ const createHotel = async (req, res) => {
         res.status(400).json({ error: err.message });
         return;
       }
-      res.status(200).json({
-        ...result,
-      });
+      res.status(200).json(result);
     }
   );
 };
@@ -29,9 +27,7 @@ const getHotels = async (req, res) => {
       return;
     }
 
-    res.status(200).json({
-      ...result,
-    });
+    res.status(200).json(result);
   });
 };
 
@@ -51,9 +47,7 @@ const getHotelById = async (req, res) => {
       return;
     }
 
-    res.status(200).json({
-      ...result,
-    });
+    res.status(200).json(result);
   });
 };
 
@@ -79,28 +73,27 @@ const deleteHotelById = async (req, res) => {
 
 const updateHotel = async (req, res) => {
   const { id } = req.params;
-  // const { name, type, slots, phone } = req.body;
-  HotelModel.findByIdAndUpdate(
-    id,
-    { ...req.body },
-    { new: true },
-    (err, result) => {
-      if (err) {
-        res.status(400).json({ error: err.message });
-        return;
-      }
-      if (_.isEmpty(result)) {
-        res.status(400).json({
-          error: "Đối tượng này không tồn tại",
-        });
-        return;
-      }
-
-      res.status(200).json({
-        ...result,
-      });
+  const body = {
+    ...req.body,
+    name: req.body.name.trim(),
+    address: req.body.address.trim(),
+    service: req.body.service.trim(),
+    hotline: req.body.hotline,
+  };
+  HotelModel.findByIdAndUpdate(id, body, { new: true }, (err, result) => {
+    if (err) {
+      res.status(400).json({ error: err.message });
+      return;
     }
-  );
+    if (_.isEmpty(result)) {
+      res.status(400).json({
+        error: "Đối tượng này không tồn tại",
+      });
+      return;
+    }
+
+    res.status(200).json(result);
+  });
 };
 module.exports = {
   getHotels,

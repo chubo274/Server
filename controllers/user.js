@@ -38,32 +38,30 @@ const login = async (req, res) => {
   const token = encodeToken(user._id, baseToken);
   const resData = { ...data._doc, token };
   delete resData.baseToken;
-  res.status(200).json({ ...resData });
+  res.status(200).json(resData);
 };
 
 //* Create
 const createUser = async (req, res) => {
-  const { phone, password, name, address } = req.body;
-  const hashPassword = await bcrypt.hash(password, 12);
-  UserModel.create(
-    {
-      phone,
-      password: hashPassword,
-      name,
-      address,
-    },
-    (err, result) => {
-      if (err) {
-        console.log("createUser error: ", err.message);
-        res.status(400).json({
-          error: err.message,
-        });
-        return;
-      }
-
-      res.status(200).json({ ...result });
+  const body = {
+    phone: req.body.phone,
+    password: req.body.password,
+    name: req.body.name.trim(),
+    address: req.body.address.trim(),
+  };
+  const hashPassword = await bcrypt.hash(body.password, 12);
+  body.password = hashPassword;
+  UserModel.create(body, (err, result) => {
+    if (err) {
+      console.log("createUser error: ", err.message);
+      res.status(400).json({
+        error: err.message,
+      });
+      return;
     }
-  );
+
+    res.status(200).json(result);
+  });
 };
 
 //* Delete
@@ -105,7 +103,7 @@ const getUserById = async (req, res) => {
       });
       return;
     }
-    res.status(200).json({ ...result });
+    res.status(200).json(result);
   });
 };
 
@@ -119,15 +117,26 @@ const getUsers = async (req, res) => {
       return;
     }
 
-    res.status(200).json({ ...result });
+    res.status(200).json(result);
   });
 };
 
 //* UpdatebyId
 const updateUser = async (req, res) => {
   const id = req.params.id;
-  const newBody = { ...req.body };
-  UserModel.findByIdAndUpdate(id, newBody, { new: true }, (err, result) => {
+  const body = {
+    ...req.body,
+    phone: req.body.phone,
+    // password: req.body.password,
+    name: req.body.name.trim(),
+    address: req.body.address.trim(),
+  };
+  if (!_.isEmpty(body.password)) {
+    const hashPassword = await bcrypt.hash(body.password, 12);
+    body.password = hashPassword;
+  }
+
+  UserModel.findByIdAndUpdate(id, body, { new: true }, (err, result) => {
     if (err) {
       res.status(400).json({
         error: err.message,
@@ -140,7 +149,7 @@ const updateUser = async (req, res) => {
       });
       return;
     }
-    res.status(200).json({ ...result });
+    res.status(200).json(result);
   });
 };
 
