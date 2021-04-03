@@ -10,7 +10,7 @@ const { PORT } = require("./config/index");
 const mongo = require("./config/index");
 
 //! Router
-const routes = require("./routes");
+const router = require("./router");
 const app = express();
 
 //! connect to database
@@ -36,13 +36,14 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
 //* Api Router
-app.use("/user", routes.user);
-app.use("/hotel", routes.hotel);
-app.use("/transport", routes.transport);
-app.use("/tourGuide", routes.tourGuide);
-app.use("/province", routes.province);
-app.use("/place", routes.place);
-app.use("/tour", routes.tour);
+app.use("/user", router.user);
+app.use("/hotel", router.hotel);
+app.use("/transport", router.transport);
+app.use("/tourGuide", router.tourGuide);
+app.use("/province", router.province);
+app.use("/place", router.place);
+app.use("/tour", router.tour);
+app.use("/upload", router.upload);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

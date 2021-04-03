@@ -6,4 +6,5 @@ module.exports = {
   province: require("./province"),
   place: require("./place"),
   tour: require("./tour"),
+  upload: require("./upload"),
 };
