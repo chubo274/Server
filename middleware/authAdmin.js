@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const User = require("../models/user");
+const Place = require("../models/Place");
 
 module.exports = async (req, res, next) => {
   let requestHeader = req.get("Authorization");
@@ -11,16 +11,16 @@ module.exports = async (req, res, next) => {
   }
   if (!!requestHeader) {
     let token = requestHeader.split(" ")[1];
-    let decodeToken = jwt.verify(token, "secret_key");
+    let decodeToken = jwt.verify(token, "secret_key_admin");
     let { _id, baseToken } = decodeToken;
-    let user = await User.findById(_id);
-    if (user) {
-      if (baseToken !== user.baseToken) {
+    let admin = await Place.findById(_id);
+    if (admin) {
+      if (baseToken !== admin.baseToken) {
         res.status(400).json({
           message: "Token đã hết hạn",
         });
       }
-      req.user = user;
+      req.admin = admin;
     }
   }
   next();
