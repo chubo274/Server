@@ -3,11 +3,7 @@ const Schema = mongoose.Schema;
 
 const placeSchema = new Schema(
   {
-    province: {
-      type: Schema.Types.ObjectId,
-      ref: "Province",
-      required: true,
-    },
+    province: String,
     name: { type: String, required: true },
   },
   { versionKey: false }

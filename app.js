@@ -37,10 +37,7 @@ app.use(express.static(path.join(__dirname, "public")));
 
 //* Api Router
 app.use("/user", router.user);
-app.use("/hotel", router.hotel);
-app.use("/transport", router.transport);
-app.use("/tourGuide", router.tourGuide);
-app.use("/province", router.province);
+app.use("/admin", router.admin);
 app.use("/place", router.place);
 app.use("/tour", router.tour);
 app.use("/upload", router.upload);

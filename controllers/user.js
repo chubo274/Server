@@ -149,7 +149,10 @@ const updateUser = async (req, res) => {
       });
       return;
     }
-    res.status(200).json(result);
+
+    const data = { ...result._doc };
+    delete data.baseToken;
+    res.status(200).json(data);
   });
 };
 
