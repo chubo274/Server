@@ -11,7 +11,10 @@ router.get("/", async function (req, res) {
 
 router.post("/post", upload.single("image"), async function (req, res) {
   // folder upload
-  const imagePath = path.join(__dirname, "../public/images/");
+  const imagePath = path.join(
+    __dirname,
+    "../../AppDuNhan/DuNhan/src/assets/img"
+  );
   // call class Resize
   const fileUpload = new Resize(imagePath);
   if (!!!req.files) {

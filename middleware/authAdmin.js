@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const Place = require("../models/Place");
+const Admin = require("../models/Admin");
 
 module.exports = async (req, res, next) => {
   let requestHeader = req.get("Authorization");
@@ -11,9 +11,9 @@ module.exports = async (req, res, next) => {
   }
   if (!!requestHeader) {
     let token = requestHeader.split(" ")[1];
-    let decodeToken = jwt.verify(token, "secret_key_admin");
+    let decodeToken = jwt.decode(token, "secret_key_admin");
     let { _id, baseToken } = decodeToken;
-    let admin = await Place.findById(_id);
+    let admin = await Admin.findById(_id);
     if (admin) {
       if (baseToken !== admin.baseToken) {
         res.status(400).json({
