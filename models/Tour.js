@@ -7,7 +7,7 @@ const tourSchema = new Schema(
       type: String,
       required: true,
     },
-    place: [
+    places: [
       {
         type: Schema.Types.ObjectId,
         ref: "Place",
@@ -20,8 +20,7 @@ const tourSchema = new Schema(
     },
     avatar: { type: String, required: true },
     place_start: {
-      type: Schema.Types.ObjectId,
-      ref: "Province",
+      type: String,
       required: true,
     },
     time_start: { type: Date, required: true },
@@ -43,18 +42,16 @@ const tourSchema = new Schema(
       type: Number,
       requried: true,
     },
-    hotel: [{ type: Schema.Types.ObjectId, ref: "Hotel", required: true }],
-    transport: {
-      type: Schema.Types.ObjectId,
-      ref: "Transport",
+    hotels: [{ type: String }],
+    vehicle: {
+      type: String,
       required: true,
     },
-    tour_guide: {
-      type: Schema.Types.ObjectId,
-      ref: "TourGuide",
+    tour_guide_info: {
+      type: String,
       required: true,
     },
-    list_image: [String],
+    list_images: [String],
     discount: Number,
     description: String,
     notes: [String],
@@ -64,6 +61,7 @@ const tourSchema = new Schema(
         booking_date: { type: Date },
         total_ticket: { type: Number },
         total_money: { type: Number },
+        can_dispose: { type: Boolean },
       },
     ],
   },

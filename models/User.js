@@ -16,24 +16,18 @@ const userSchema = new Schema(
       type: String,
       required: true,
     },
+    bank_number: String,
+    money_available: Number,
     address: String,
     baseToken: String,
   },
   { versionKey: false }
 );
 
-// userSchema.methods.hashPassword = function(password){
-//   return bcrypt.hashPassword
-// }
-
-// userSchema.pre('save', function() {
-//   hashPassword = this.hashPassword(password)
-// })
-
-userSchema.pre('update', function(next) {
-  console.log('running here')
-  console.log(this.getUpdate())
-  next()
-})
+userSchema.pre("update", function (next) {
+  console.log("running here");
+  console.log(this.getUpdate());
+  next();
+});
 
 module.exports = mongoose.model("User", userSchema);

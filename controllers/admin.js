@@ -1,4 +1,4 @@
-const AdminModel = require("../models/admin");
+const AdminModel = require("../models/Admin");
 const _ = require("lodash");
 const bcrypt = require("bcryptjs");
 const { v4: uuidv4 } = require("uuid");
@@ -15,7 +15,7 @@ const login = async (req, res) => {
   let admin = await AdminModel.findOne({ user_name: user_name });
   if (_.isEmpty(admin)) {
     res.status(402).json({
-      error: "Số điện thoại không tồn tại",
+      error: "Tài khoản không tồn tại",
     });
     return;
   }

@@ -47,6 +47,8 @@ const createUser = async (req, res) => {
     phone: req.body.phone,
     password: req.body.password,
     name: req.body.name.trim(),
+    bank_number: req.body.bank_number,
+    money_available: req.body.money_available,
     address: req.body.address.trim(),
   };
   const hashPassword = await bcrypt.hash(body.password, 12);
@@ -126,10 +128,6 @@ const updateUser = async (req, res) => {
   const id = req.params.id;
   const body = {
     ...req.body,
-    phone: req.body.phone,
-    // password: req.body.password,
-    name: req.body.name.trim(),
-    address: req.body.address.trim(),
   };
   if (!_.isEmpty(body.password)) {
     const hashPassword = await bcrypt.hash(body.password, 12);
