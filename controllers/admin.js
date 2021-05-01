@@ -38,6 +38,7 @@ const login = async (req, res) => {
   const token = encodeToken(admin._id, baseToken);
   const resData = { ...data._doc, token };
   delete resData.baseToken;
+  resData.role = "admin";
   res.status(200).json(resData);
 };
 

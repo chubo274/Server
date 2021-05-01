@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const User = require("../models/user");
+const UserModel = require("../models/User");
 
 module.exports = async (req, res, next) => {
   let requestHeader = req.get("Authorization");
@@ -13,7 +13,7 @@ module.exports = async (req, res, next) => {
     let token = requestHeader.split(" ")[1];
     let decodeToken = jwt.decode(token, "secret_key");
     let { _id, baseToken } = decodeToken;
-    let user = await User.findById(_id);
+    let user = await UserModel.findById(_id);
     if (user) {
       if (baseToken !== user.baseToken) {
         res.status(400).json({
