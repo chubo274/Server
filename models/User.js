@@ -24,10 +24,4 @@ const userSchema = new Schema(
   { versionKey: false }
 );
 
-userSchema.pre("update", function (next) {
-  console.log("running here");
-  console.log(this.getUpdate());
-  next();
-});
-
 module.exports = mongoose.model("User", userSchema);
