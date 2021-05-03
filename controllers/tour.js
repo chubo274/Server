@@ -272,37 +272,34 @@ const getAllBooking = async (req, res) => {
       { $project: { _id: 0, booking: 1 } },
       { $unwind: "$booking" },
       { $replaceRoot: { newRoot: "$booking" } },
-      {
-        $match: {
-          $and: [
-            ...(start_date
-              ? [
-                  {
-                    booking_date: {
-                      $gte: moment(start_date).startOf("day").toISOString(),
-                    },
-                  },
-                ]
-              : []),
-            ...(end_date
-              ? [
-                  {
-                    booking_date: {
-                      $lte: moment(end_date).startOf("day").toISOString(),
-                    },
-                  },
-                ]
-              : []),
-            ...(user_id
-              ? [
-                  {
-                    user: mongoose.Types.ObjectId(user_id),
-                  },
-                ]
-              : []),
-          ],
-        },
-      },
+      // {
+      //   $match: {
+      //     $and: [
+      //       {
+      //         booking_date: {
+      //           $gte: moment(start_date).startOf("day").toISOString(),
+      //           $lte: moment(end_date).startOf("day").toISOString(),
+      //         },
+      //       },
+      //       ...(user_id
+      //         ? [
+      //             {
+      //               user: mongoose.Types.ObjectId(user_id),
+      //             },
+      //           ]
+      //         : []),
+      //     ],
+      //   },
+      // },
+      ...(user_id
+        ? [
+            {
+              $match: {
+                user: mongoose.Types.ObjectId(user_id),
+              },
+            },
+          ]
+        : []),
     ]);
     res.status(200).json(tourBookings);
   } catch (error) {
