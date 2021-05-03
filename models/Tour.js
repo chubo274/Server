@@ -57,6 +57,7 @@ const tourSchema = new Schema(
     notes: [String],
     booking: [
       {
+        tour: { type: Schema.Types.ObjectId, ref: "Tour" },
         user: { type: Schema.Types.ObjectId, ref: "User" },
         booking_date: { type: Date },
         total_ticket: { type: Number },
