@@ -47,9 +47,10 @@ const createUser = async (req, res) => {
     phone: req.body.phone,
     password: req.body.password,
     name: req.body.name.trim(),
-    bank_number: req.body.bank_number,
-    money_available: req.body.money_available,
-    address: req.body.address.trim(),
+    role: req.body.role.trim(),
+    bank_number: `${req.body.phone}88`,
+    money_available: 0,
+    address: req.body.address,
   };
   const hashPassword = await bcrypt.hash(body.password, 12);
   body.password = hashPassword;

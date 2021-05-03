@@ -47,6 +47,7 @@ const createAdmin = async (req, res) => {
   const body = {
     user_name: req.body.user_name,
     password: req.body.password,
+    role: req.body.role.trim(),
   };
   const hashPassword = await bcrypt.hash(body.password, 12);
   body.password = hashPassword;
@@ -85,8 +86,23 @@ const deleteById = async (req, res) => {
   });
 };
 
+//* get
+const getAdmins = async (req, res) => {
+  AdminModel.find((err, result) => {
+    if (err) {
+      res.status(400).json({
+        error: err.message,
+      });
+      return;
+    }
+
+    res.status(200).json(result);
+  });
+};
+
 module.exports = {
   login,
   createAdmin,
   deleteById,
+  getAdmins,
 };

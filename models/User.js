@@ -16,6 +16,11 @@ const userSchema = new Schema(
       type: String,
       required: true,
     },
+    role: {
+      type: String,
+      required: true,
+      enum: ["Staff", "Admin", "SuperAdmin", "User"],
+    },
     bank_number: String,
     money_available: Number,
     address: String,

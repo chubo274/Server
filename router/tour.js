@@ -8,12 +8,12 @@ const authAdmin = require("../middleware/authAdmin");
 router.get("/", tourController.getTours);
 router.get("/", tourController.getTours);
 router.post("/", tourController.createTour);
-router.post("/search/", tourController.searchTours);
+router.post("/search", tourController.searchTours);
 // Booking
-router.put("/cancel/", tourController.cancelBookingTour);
-router.put("/booking/:id", tourController.bookingTour);
+router.put("/cancel", tourController.cancelBookingTour);
 // Admin App
 router.get("/allBooking", tourController.getAllBooking);
+router.put("/booking/:id", tourController.bookingTour);
 router.get("/:id", tourController.getTourById);
 router.delete("/:id", tourController.deleteTourById);
 router.put("/:id", tourController.updateTour);
