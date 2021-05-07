@@ -35,9 +35,18 @@ const createTour = async (req, res) => {
 };
 
 const getTours = async (req, res) => {
+  const { id } = req.body;
   try {
-    let Tour = await TourModel.find().populate("places");
-    res.status(200).json(Tour);
+    const Tour = await TourModel.find().populate("places");
+    const listSale = await TourModel.find({ discount: { $gte: 25 } })
+      .sort({ discount: -1 })
+      .limit(10)
+      .populate("places");
+    const listSuggest = [];
+    // const suggest = await TourModel.find({
+    //   booking._id: { $nin: [mongoose.Types.ObjectId(id)] },
+    // });
+    res.status(200).json({ Tour, listSale, listSuggest });
   } catch (error) {
     res.status(400).json({
       error: "Sai cấu trúc hoặc Đối tượng này không tồn tại",
@@ -135,7 +144,7 @@ const searchTours = async (req, res) => {
               },
             ]
           : []),
-        ...(places ? [{ places: { $in: JSON.parse(places) } }] : []),
+        // ...(places ? [{ places: { $in: JSON.parse(places) } }] : []),
       ],
     });
     res.status(200).json(tours);
@@ -202,7 +211,7 @@ const cancelBookingTour = async (req, res) => {
   console.log(req.query);
   const { tour_id, booking_id } = req.query;
   try {
-    const Tour = await TourModel.findById(tour_id);
+    let Tour = await TourModel.findById(tour_id);
     if (!_.isEmpty(Tour)) {
       let dataBooking = await TourModel.aggregate([
         { $project: { _id: 0, booking: 1 } },
@@ -223,27 +232,43 @@ const cancelBookingTour = async (req, res) => {
           total_ticket,
           can_dispose,
         } = dataBooking[0];
-        console.log(
-          { _id },
-          { user },
-          { booking_date },
-          { total_money },
-          { total_ticket },
-          { can_dispose }
-        );
         if (can_dispose) {
-          const x = await Tour.update(
-            { _id: mongoose.Types.ObjectId(tour_id) },
-            {
-              $unset: {
-                booking: mongoose.Types.ObjectId(booking_id),
-              },
-            }
-          );
-          console.log({ x });
-          const newTour = await TourModel.findById(tour_id);
-          console.log(newTour);
-          res.status(200).json(newTour);
+          let percentRefund = 100;
+          if (moment(Tour.time_start).diff(moment().toDate(), "days") > 9) {
+            percentRefund = 100;
+          } else if (
+            moment(Tour.time_start).diff(moment().toDate(), "days") > 7
+          ) {
+            percentRefund = 75;
+          } else if (
+            moment(Tour.time_start).diff(moment().toDate(), "days") > 5
+          ) {
+            percentRefund = 50;
+          } else if (
+            moment(Tour.time_start).diff(moment().toDate(), "days") > 3
+          ) {
+            percentRefund = 25;
+          } else percentRefund = 0;
+          dataBooking[0].total_money =
+            ((100 - percentRefund) / 100) * total_money;
+          delete dataBooking[0].user;
+          delete dataBooking[0].total_ticket;
+          delete dataBooking[0].can_dispose;
+
+          let indexBooking;
+          Tour.booking.map((el, index) => {
+            if (el._id.toString() === dataBooking[0]._id.toString())
+              indexBooking = index;
+          });
+          Tour.booking[indexBooking] = { ...dataBooking[0] };
+          const newTour = await TourModel.findByIdAndUpdate(tour_id, Tour);
+          let getUser = await UserModel.findById(user);
+          const newUser = await UserModel.findByIdAndUpdate(user, {
+            ...getUser,
+            money_available:
+              getUser.money_available + total_money * percentRefund,
+          });
+          res.status(200).json(newUser);
         } else {
           res.status(400).json({
             error: "Tour không nằm trong danh sách được hỗ trợ huỷ",
@@ -272,25 +297,6 @@ const getAllBooking = async (req, res) => {
       { $project: { _id: 0, booking: 1 } },
       { $unwind: "$booking" },
       { $replaceRoot: { newRoot: "$booking" } },
-      // {
-      //   $match: {
-      //     $and: [
-      //       {
-      //         booking_date: {
-      //           $gte: moment(start_date).startOf("day").toISOString(),
-      //           $lte: moment(end_date).startOf("day").toISOString(),
-      //         },
-      //       },
-      //       ...(user_id
-      //         ? [
-      //             {
-      //               user: mongoose.Types.ObjectId(user_id),
-      //             },
-      //           ]
-      //         : []),
-      //     ],
-      //   },
-      // },
       ...(user_id
         ? [
             {
@@ -304,6 +310,17 @@ const getAllBooking = async (req, res) => {
     res.status(200).json(tourBookings);
   } catch (error) {
     console.log({ error });
+    res.status(400).json({
+      error: "Oop! có lỗi bất ngờ",
+    });
+  }
+};
+
+const getListSuggest = async (req, res) => {
+  try {
+    const top10 = await TourModel.find({}).sort("test");
+    console.log({ top10 });
+  } catch (error) {
     res.status(400).json({
       error: "Oop! có lỗi bất ngờ",
     });

@@ -106,6 +106,7 @@ const getUserById = async (req, res) => {
       });
       return;
     }
+    delete result.baseToken;
     res.status(200).json(result);
   });
 };
