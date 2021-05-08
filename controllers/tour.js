@@ -42,10 +42,11 @@ const getTours = async (req, res) => {
       .sort({ discount: -1 })
       .limit(10)
       .populate("places");
-    const listSuggest = [];
-    // const suggest = await TourModel.find({
-    //   booking._id: { $nin: [mongoose.Types.ObjectId(id)] },
-    // });
+    const listSuggest = await TourModel.find({
+      "booking.user": {
+        $nin: [mongoose.Types.ObjectId(id)],
+      },
+    }).populate("places");
     res.status(200).json({ Tour, listSale, listSuggest });
   } catch (error) {
     res.status(400).json({
@@ -144,7 +145,7 @@ const searchTours = async (req, res) => {
               },
             ]
           : []),
-        // ...(places ? [{ places: { $in: JSON.parse(places) } }] : []),
+        ...(places ? [{ places: { $in: JSON.parse(places) } }] : []),
       ],
     });
     res.status(200).json(tours);
