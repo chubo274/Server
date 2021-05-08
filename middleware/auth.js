@@ -12,15 +12,25 @@ module.exports = async (req, res, next) => {
   if (!!requestHeader) {
     let token = requestHeader.split(" ")[1];
     let decodeToken = jwt.decode(token, "secret_key");
-    let { _id, baseToken } = decodeToken;
-    let user = await UserModel.findById(_id);
-    if (user) {
-      if (baseToken !== user.baseToken) {
-        res.status(400).json({
-          message: "Token đã hết hạn",
-        });
+    if (!!decodeToken) {
+      let { _id, baseToken } = decodeToken;
+      let user = await UserModel.findById(_id);
+      if (user) {
+        if (baseToken !== user.baseToken) {
+          console.log("baseToken het han");
+          res.status(400).json({
+            message: "Token đã hết hạn",
+          });
+          return;
+        }
+        req.user = user;
       }
-      req.user = user;
+    } else {
+      console.log("user");
+      res.status(400).json({
+        message: "Token đã hết hạn",
+      });
+      return;
     }
   }
   next();
