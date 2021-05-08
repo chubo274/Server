@@ -46,7 +46,7 @@ const getTours = async (req, res) => {
       "booking.user": {
         $nin: [mongoose.Types.ObjectId(id)],
       },
-    });
+    }).populate("places");
     res.status(200).json({ Tour, listSale, listSuggest });
   } catch (error) {
     res.status(400).json({
