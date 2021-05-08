@@ -121,6 +121,7 @@ const deleteTourById = async (req, res) => {
 };
 
 const searchTours = async (req, res) => {
+  console.log(req.query);
   const {
     place_start,
     priceFromKey,
@@ -128,7 +129,6 @@ const searchTours = async (req, res) => {
     time_start,
     places,
   } = req.query;
-  console.log(req.query);
   try {
     let tours = await TourModel.find({
       $and: [
@@ -145,7 +145,7 @@ const searchTours = async (req, res) => {
               },
             ]
           : []),
-        ...(places ? [{ places: { $in: JSON.parse(places) } }] : []),
+        ...(places ? [{ places: { $in: places } }] : []),
       ],
     });
     res.status(200).json(tours);
