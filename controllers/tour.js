@@ -207,8 +207,6 @@ const bookingTour = async (req, res) => {
 };
 
 const cancelBookingTour = async (req, res) => {
-  console.log(req.body);
-  console.log(req.params);
   console.log(req.query);
   const { tour_id, booking_id } = req.query;
   try {
@@ -261,15 +259,21 @@ const cancelBookingTour = async (req, res) => {
             if (el._id.toString() === dataBooking[0]._id.toString())
               indexBooking = index;
           });
-          Tour.booking[indexBooking] = { ...dataBooking[0] };
+          Tour.booking[indexBooking] = {
+            ...dataBooking[0],
+          };
+          Tour.slots = Tour.slots + total_ticket;
           const newTour = await TourModel.findByIdAndUpdate(tour_id, Tour);
-          let getUser = await UserModel.findById(user);
-          const newUser = await UserModel.findByIdAndUpdate(user, {
-            ...getUser,
+
+          const getUser = await UserModel.findById(user);
+          const bodyUser = { ...getUser._doc };
+          const updateUser = {
+            ...bodyUser,
             money_available:
-              getUser.money_available + total_money * percentRefund,
-          });
-          res.status(200).json(newUser);
+              bodyUser.money_available + total_money * (percentRefund / 100),
+          };
+          const newUser = await UserModel.findByIdAndUpdate(user, updateUser);
+          res.status(200).json({ newTour, newUser });
         } else {
           res.status(400).json({
             error: "Tour không nằm trong danh sách được hỗ trợ huỷ",

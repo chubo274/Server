@@ -12,15 +12,18 @@ module.exports = async (req, res, next) => {
   if (!!requestHeader) {
     let token = requestHeader.split(" ")[1];
     let decodeToken = jwt.decode(token, "secret_key_admin");
-    let { _id, baseToken } = decodeToken;
-    let admin = await Admin.findById(_id);
-    if (admin) {
-      if (baseToken !== admin.baseToken) {
-        res.status(400).json({
-          message: "Token đã hết hạn",
-        });
+    if (!!decodeToken) {
+      let { _id, baseToken } = decodeToken;
+      let admin = await Admin.findById(_id);
+      if (admin) {
+        if (baseToken !== admin.baseToken) {
+          res.status(400).json({
+            message: "Token đã hết hạn",
+          });
+          return;
+        }
+        req.admin = admin;
       }
-      req.admin = admin;
     }
   }
   next();

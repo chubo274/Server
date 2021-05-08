@@ -3,6 +3,7 @@ const _ = require("lodash");
 const bcrypt = require("bcryptjs");
 const { v4: uuidv4 } = require("uuid");
 const jwt = require("jsonwebtoken");
+const mongoose = require("mongoose");
 
 //* Token
 const encodeToken = (_id, baseToken) => {
@@ -47,7 +48,7 @@ const createUser = async (req, res) => {
     phone: req.body.phone,
     password: req.body.password,
     name: req.body.name.trim(),
-    role: req.body.role.trim(),
+    role: "User",
     bank_number: `${req.body.phone}88`,
     money_available: 0,
     address: req.body.address,
@@ -156,6 +157,49 @@ const updateUser = async (req, res) => {
   });
 };
 
+const forGotPass = async (req, res) => {
+  console.log(req.body);
+  const { phone, password } = req.body;
+  try {
+    const user = await UserModel.find({ phone });
+    let body = { ...user[0]._doc };
+    if (!_.isEmpty(password)) {
+      const hashPassword = await bcrypt.hash(password, 12);
+      body.password = hashPassword;
+      delete body._id;
+      delete body.baseToken;
+      delete body.token;
+    }
+    UserModel.findByIdAndUpdate(
+      { _id: user[0]._id },
+      body,
+      { new: true },
+      (err, result) => {
+        if (err) {
+          res.status(400).json({
+            error: err.message,
+          });
+          return;
+        }
+        if (_.isEmpty(result)) {
+          res.status(400).json({
+            error: "Đối tượng này không tồn tại",
+          });
+          return;
+        }
+
+        const data = result;
+        delete data.baseToken;
+        res.status(200).json(data);
+      }
+    );
+  } catch (error) {
+    res.status(400).json({
+      error: "Oop, có lỗi",
+    });
+  }
+};
+
 module.exports = {
   login,
   getUserById,
@@ -163,4 +207,5 @@ module.exports = {
   createUser,
   deleteById,
   updateUser,
+  forGotPass,
 };
