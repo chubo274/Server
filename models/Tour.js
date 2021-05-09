@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const random = require("mongoose-simple-random");
 const Schema = mongoose.Schema;
 
 const tourSchema = new Schema(
@@ -68,5 +69,6 @@ const tourSchema = new Schema(
   },
   { versionKey: false }
 );
+tourSchema.plugin(random);
 
 module.exports = mongoose.model("Tour", tourSchema);
