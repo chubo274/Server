@@ -35,7 +35,7 @@ const createTour = async (req, res) => {
 };
 
 const getTours = async (req, res) => {
-  const { id } = req.body;
+  const { _id } = req.query;
   try {
     const Tour = await TourModel.find().populate("places");
     const listSale = await TourModel.find({ discount: { $gte: 25 } })
@@ -43,11 +43,39 @@ const getTours = async (req, res) => {
       .limit(10)
       .populate("places");
     const listSuggest = await TourModel.find({
-      "booking.user": {
-        $nin: [mongoose.Types.ObjectId(id)],
-      },
+      $and: [
+        {
+          "booking.user": {
+            $nin: _id,
+          },
+        },
+        {
+          time_start: { $gt: moment().endOf("day").toISOString() },
+        },
+      ],
     }).populate("places");
-    res.status(200).json({ Tour, listSale, listSuggest });
+    var filter = {
+      $and: [
+        {
+          "booking.user": {
+            $nin: _id,
+          },
+        },
+        {
+          time_start: { $gt: moment().endOf("day").toISOString() },
+        },
+      ],
+    };
+    var options = { limit: 5, populate: "places" };
+    TourModel.findRandom(filter, {}, options, function (err, results) {
+      if (!err) {
+        res.status(200).json({ Tour, listSale, listSuggest: results });
+      } else {
+        res.status(400).json({
+          error: "Oop! something wrong with random",
+        });
+      }
+    });
   } catch (error) {
     res.status(400).json({
       error: "Sai cấu trúc hoặc Đối tượng này không tồn tại",

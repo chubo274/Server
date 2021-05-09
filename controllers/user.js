@@ -48,7 +48,7 @@ const createUser = async (req, res) => {
     phone: req.body.phone,
     password: req.body.password,
     name: req.body.name.trim(),
-    role: "User",
+    role: req.body.role ? req.body.role.trim() : "User",
     bank_number: `${req.body.phone}88`,
     money_available: 0,
     address: req.body.address,
