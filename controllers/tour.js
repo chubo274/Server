@@ -49,7 +49,7 @@ const getTours = async (req, res) => {
         .sort({ discount: -1 })
         .limit(10)
         .populate("places");
-      const listSuggest = await TourModel.find({
+      await TourModel.find({
         $and: [
           {
             "booking.user": {
@@ -202,7 +202,13 @@ const searchTours = async (req, res) => {
                   },
                 },
               ]
-            : []),
+            : [
+                {
+                  time_start: {
+                    $gte: moment().startOf("day").toISOString(),
+                  },
+                },
+              ]),
           ...(places ? [{ places: { $in: places } }] : []),
         ],
       });

@@ -60,8 +60,18 @@ app.use(function (err, req, res, next) {
   res.render("error");
 });
 
+// const adminBro = new AdminBro({
+//   databases: [],
+//   rootPath: "/admin-route",
+// });
+
+// const adminRoute = AdminBroExpress.buildRouter(adminBro);
+
+// app.use(adminBro.options.rootPath, adminRoute);
+
 app.listen(PORT, () => {
   console.log(`Server running on PORT: ${PORT}`);
 });
+// app.listen(3000, () => console.log("AdminBro is under localhost:8080/admin"));
 
 module.exports = app;
