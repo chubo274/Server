@@ -16,20 +16,20 @@ module.exports = async (req, res, next) => {
       let { _id, baseToken } = decodeToken;
       let user = await UserModel.findById(_id);
       if (user) {
+        console.log({ user });
         if (baseToken !== user.baseToken) {
           console.log("baseToken het han");
           res.status(400).json({
-            message: "Token đã hết hạn",
+            message:
+              "Token đã hết hạn hoặc tài khoản đăng nhập nơi khác, vui lòng đăng nhập lại",
           });
           return;
         }
-        console.log({ user });
         req.user = user;
       }
     } else {
-      console.log("user");
       res.status(400).json({
-        message: "Token đã hết hạn",
+        message: "Token đã hết hạn, vui lòng đăng nhập lại",
       });
       return;
     }
