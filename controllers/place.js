@@ -67,6 +67,7 @@ const getPlaceById = async (req, res) => {
 };
 
 const deletePlaceById = async (req, res) => {
+  console.log(req);
   if (req.user.role == "SuperAdmin" || req.user.role == "Admin") {
     const { id } = req.params;
     PlaceModel.findByIdAndDelete(id, (err, result) => {

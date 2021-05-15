@@ -16,7 +16,6 @@ module.exports = async (req, res, next) => {
       let { _id, baseToken } = decodeToken;
       let user = await UserModel.findById(_id);
       if (user) {
-        console.log({ user });
         if (baseToken !== user.baseToken) {
           console.log("baseToken het han");
           res.status(400).json({
