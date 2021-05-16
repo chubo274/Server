@@ -309,18 +309,28 @@ const cancelBookingTour = async (req, res) => {
           } = dataBooking[0];
           if (can_dispose) {
             let percentRefund = 100;
-            if (moment(Tour.time_start).diff(moment().toDate(), "days") > 9) {
+            if (
+              moment(Tour.time_start)
+                .startOf("day")
+                .diff(moment().startOf("day").toDate(), "days") > 9
+            ) {
               percentRefund = 100;
             } else if (
-              moment(Tour.time_start).diff(moment().toDate(), "days") > 7
+              moment(Tour.time_start)
+                .startOf("day")
+                .diff(moment().startOf("day").toDate(), "days") > 7
             ) {
               percentRefund = 75;
             } else if (
-              moment(Tour.time_start).diff(moment().toDate(), "days") > 5
+              moment(Tour.time_start)
+                .startOf("day")
+                .diff(moment().startOf("day").toDate(), "days") > 5
             ) {
               percentRefund = 50;
             } else if (
-              moment(Tour.time_start).diff(moment().toDate(), "days") > 3
+              moment(Tour.time_start)
+                .startOf("day")
+                .diff(moment().startOf("day").toDate(), "days") > 3
             ) {
               percentRefund = 25;
             } else percentRefund = 0;
