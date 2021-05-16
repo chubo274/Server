@@ -393,6 +393,14 @@ const getAllBooking = async (req, res) => {
               },
             ]
           : []),
+        {
+          $lookup: {
+            from: "tours",
+            localField: "tour",
+            foreignField: "_id",
+            as: "tour",
+          },
+        },
       ]);
       res.status(200).json(tourBookings);
     } catch (error) {
