@@ -282,8 +282,8 @@ const bookingTour = async (req, res) => {
 };
 
 const cancelBookingTour = async (req, res) => {
+  console.log(req.query);
   if (!_.isEmpty(req.user.role)) {
-    console.log(req.query);
     const { tour_id, booking_id } = req.query;
     try {
       let Tour = await TourModel.findById(tour_id);

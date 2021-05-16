@@ -126,17 +126,27 @@ const getUserById = async (req, res) => {
 
 //* GetList
 const getUsers = async (req, res) => {
+  const { role } = req.query;
   if (req.user.role == "SuperAdmin" || req.user.role == "Admin") {
-    UserModel.find((err, result) => {
-      if (err) {
-        res.status(400).json({
-          error: err.message,
-        });
-        return;
-      }
+    if (_.isEmpty(role)) {
+      UserModel.find((err, result) => {
+        if (err) {
+          res.status(400).json({
+            error: err.message,
+          });
+          return;
+        }
 
-      res.status(200).json(result);
-    });
+        res.status(200).json(result);
+      });
+    } else {
+      try {
+        const allUserData = await UserModel.find({ role });
+        res.status(200).json(allUserData);
+      } catch (error) {
+        res.status(400).json(error.message);
+      }
+    }
   } else {
     res.status(400).json({
       error: "Bạn không có quyền thực hiện thao tác này",
