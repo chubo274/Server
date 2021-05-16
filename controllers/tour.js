@@ -45,22 +45,19 @@ const getTours = async (req, res) => {
     const { _id } = req.query;
     try {
       const Tour = await TourModel.find().populate("places");
-      const listSale = await TourModel.find({ discount: { $gte: 25 } })
-        .sort({ discount: -1 })
-        .limit(10)
-        .populate("places");
-      await TourModel.find({
+
+      const listSale = await TourModel.find({
         $and: [
-          {
-            "booking.user": {
-              $nin: _id,
-            },
-          },
+          { discount: { $gte: 25 } },
           {
             time_start: { $gt: moment().endOf("day").toISOString() },
           },
         ],
-      }).populate("places");
+      })
+        .sort({ discount: -1 })
+        .limit(10)
+        .populate("places");
+
       var filter = {
         $and: [
           {
@@ -99,15 +96,14 @@ const getTourById = async (req, res) => {
   if (!_.isEmpty(req.user.role)) {
     const { id } = req.params;
     try {
-      let tour = await TourModel.findById(id);
+      let tour = await TourModel.findById(id).populate("places");
       if (_.isEmpty(tour)) {
         res.status(400).json({
           error: "Đối tượng này không tồn tại",
         });
         return;
       }
-      let Tour = await TourModel.findById(id).populate("places");
-      res.status(200).json(Tour);
+      res.status(200).json(tour);
     } catch (error) {
       res.status(400).json({
         error: "Sai cấu trúc hoặc Đối tượng này không tồn tại!!!",
@@ -228,16 +224,20 @@ const searchTours = async (req, res) => {
 const bookingTour = async (req, res) => {
   if (req.user.role == "User") {
     const { id } = req.params;
-    const body = {
+    let body = {
       ...req.body,
+      tour: id,
+      total_money: 0,
+      booking_date: moment().toDate(),
       can_dispose: true,
     };
-    if (body.discount >= 25) {
-      body.can_dispose = false;
-    }
-    delete body.discount;
     try {
       const Tour = await TourModel.findById(id);
+      body.total_money =
+        body.total_ticket * Tour.price * ((100 - Tour.discount) / 100);
+      if (Tour.discount >= 25) {
+        body.can_dispose = false;
+      }
       const booking = [...Tour.booking, body];
       const newBooking = await TourModel.findByIdAndUpdate(id, {
         booking,
