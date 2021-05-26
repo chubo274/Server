@@ -48,6 +48,9 @@ const getTours = async (req, res) => {
 
       const listSale = await TourModel.find({
         $and: [
+          {
+            slots: { $gt: 0 },
+          },
           { discount: { $gte: 25 } },
           {
             time_start: { $gt: moment().endOf("day").toISOString() },
@@ -60,6 +63,9 @@ const getTours = async (req, res) => {
 
       var filter = {
         $and: [
+          {
+            slots: { $gt: 0 },
+          },
           {
             "booking.user": {
               $nin: _id,
@@ -186,6 +192,9 @@ const searchTours = async (req, res) => {
     try {
       let tours = await TourModel.find({
         $and: [
+          {
+            slots: { $gt: 0 },
+          },
           { place_start },
           { price: { $gte: Number(priceFromKey) } },
           { price: { $lte: Number(priceToKey) } },
@@ -233,40 +242,47 @@ const bookingTour = async (req, res) => {
     };
     try {
       const Tour = await TourModel.findById(id);
-      body.total_money =
-        body.total_ticket * Tour.price * ((100 - Tour.discount) / 100);
-      if (Tour.discount >= 25) {
-        body.can_dispose = false;
-      }
-      const booking = [...Tour.booking, body];
-      const newBooking = await TourModel.findByIdAndUpdate(id, {
-        booking,
-        slots: Tour.slots - body.total_ticket,
-      });
-      if (!_.isEmpty(newBooking)) {
-        const user = await UserModel.findById(body.user);
-        if (!_.isEmpty(user)) {
-          const newDataWallet = await UserModel.findByIdAndUpdate(body.user, {
-            money_available: user.money_available - body.total_money,
-          });
-          if (!_.isEmpty(newDataWallet)) {
-            res.status(200).json("Đặt Tour, update ví thành công");
+      if (Tour.slots >= body.total_ticket) {
+        body.total_money =
+          body.total_ticket * Tour.price * ((100 - Tour.discount) / 100);
+        if (Tour.discount >= 25) {
+          body.can_dispose = false;
+        }
+        const booking = [...Tour.booking, body];
+        const newBooking = await TourModel.findByIdAndUpdate(id, {
+          booking,
+          slots: Tour.slots - body.total_ticket,
+        });
+        if (!_.isEmpty(newBooking)) {
+          const user = await UserModel.findById(body.user);
+          if (!_.isEmpty(user)) {
+            const newDataWallet = await UserModel.findByIdAndUpdate(body.user, {
+              money_available: user.money_available - body.total_money,
+            });
+            if (!_.isEmpty(newDataWallet)) {
+              res.status(200).json("Đặt Tour, update ví thành công");
+            } else {
+              console.log("Lỗi không update được ví");
+              res.status(400).json({
+                error: "Lỗi không update được ví",
+              });
+            }
           } else {
-            console.log("Lỗi không update được ví");
+            console.log("Lỗi không tìm được ví");
             res.status(400).json({
-              error: "Lỗi không update được ví",
+              error: "Lỗi không tìm được ví",
             });
           }
         } else {
-          console.log("Lỗi không tìm được ví");
+          console.log("Lỗi không đặt được tour");
           res.status(400).json({
-            error: "Lỗi không tìm được ví",
+            error: "Lỗi không đặt được tour",
           });
         }
       } else {
-        console.log("Lỗi không đặt được tour");
+        console.log("Lỗi số vé còn nhận không đủ");
         res.status(400).json({
-          error: "Lỗi không đặt được tour",
+          error: "Lỗi số vé còn nhận không đủ",
         });
       }
     } catch (error) {
